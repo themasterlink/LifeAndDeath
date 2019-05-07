@@ -6,10 +6,10 @@
 
 int main(){
 	unsigned int size = 500;
-	Map map(iPoint2(size, size), 200);
-	Population population(50, map);
+	Map map(iPoint2(size, size), 150);
+
+	Population population(1000, map);
 	Visualizer vis(map, population);
 	vis.run();
-	std::cout << "Hello, World!" << std::endl;
 	return 0;
 }

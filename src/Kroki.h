@@ -14,7 +14,7 @@ class Kroki {
 public:
 
 	Kroki(unsigned long id, Map& map, dPoint2 startPose, double startAngle,
-			double speed, double sense, double size, std::vector<Kroki>* m_population);
+			double speed, double sense, double size, double goHomeEnergy, std::vector<Kroki>* m_population);
 
 	bool update();
 
@@ -50,12 +50,24 @@ public:
 		return m_sense;
 	}
 
+	bool gotHome() const {
+		return (m_pos - m_homePos).squaredLength() < 3;
+	}
+
 	void kill() {
 		m_isStillAlive = false;
 	}
 
 	bool stillAlive() const {
 		return m_isStillAlive;
+	}
+
+	bool isOnWayHome() const {
+		return m_energyLevel < m_goHomeEnergyLevel;
+	}
+
+	double getGoHomeEnergyLevel() const {
+		return m_goHomeEnergyLevel;
 	}
 
 	Kroki* getClosestKroki();
@@ -66,8 +78,10 @@ private:
 	double m_speed;
 	double m_sense;
 	double m_size;
+	double m_goHomeEnergyLevel;
 
 	dPoint2 m_pos;
+	const dPoint2 m_homePos;
 	double m_currentAngle;
 
 	int m_foodCounter;

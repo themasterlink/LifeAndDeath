@@ -28,21 +28,24 @@ Population::Population(unsigned int populationSize, Map& map) : m_map(map), m_po
 }
 
 void Population::addKrokiToPopulation(Kroki* kroki){
-	double speed = 1., sense = 30., size = 1.;
+	double speed = 1., sense = 30., size = 1., goHomeEnergy = 200.;
 	if(kroki != nullptr){
 		speed = kroki->getSpeed();
 		sense = kroki->getSense();
 		size = kroki->getSize();
+		goHomeEnergy = kroki->getGoHomeEnergyLevel();
 	}
 	std::normal_distribution<double> speedDist(speed, speed * 0.1);
 	speed = speedDist(m_gen);
 	std::normal_distribution<double> senseDist(sense, sense * 0.1);
 	sense = senseDist(m_gen);
 	std::normal_distribution<double> sizeDist(size, size * 0.1);
-	size = sizeDist(m_gen);
+	size = std::max(0.1, sizeDist(m_gen));
+	std::normal_distribution<double> goHomeEnergyDist(goHomeEnergy, goHomeEnergy * 0.1);
+	goHomeEnergy = std::max(0., goHomeEnergyDist(m_gen));
 	auto res = getRandomBorderPose();
 	res.first = m_map.clipPointToMap(res.first);
-	m_population.emplace_back(m_population.size(), m_map, res.first, res.second, speed, sense, size, &m_population);
+	m_population.emplace_back(m_population.size(), m_map, res.first, res.second, speed, sense, size, goHomeEnergy, &m_population);
 }
 
 void Population::printStatistic(){
@@ -65,7 +68,7 @@ void Population::goToBed(){
 	std::vector<Kroki> oldKrokis = std::move(m_population);
 	m_population = std::vector<Kroki>();
 	for(auto& oldKroki : oldKrokis){
-		if(oldKroki.stillAlive()){
+		if(oldKroki.stillAlive() && oldKroki.gotHome()){
 			for(unsigned int i = 1; i < oldKroki.getFoodCounter(); i++){
 				addKrokiToPopulation(&oldKroki);
 			}

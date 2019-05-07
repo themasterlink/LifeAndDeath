@@ -13,6 +13,8 @@
 #include "Point2.h"
 
 #define printWarning(msg) std::cout << "Warning in " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": " << msg << std::endl;
+#define printError(msg) std::cout << "Error in " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": " << msg << std::endl;
+#define printVar(var) std::cout << ""#var << ": "  << var << std::endl
 
 
 namespace utils{
